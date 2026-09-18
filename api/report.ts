@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { callGroqLLM } from '../src/utils/groq.js';
+import { callGroqLLM } from '../lib/groq.js';
 
 const SYSTEM_PROMPT = `Du bist ein erfahrener Recruiter und Interview-Coach für den Schweizer Markt.
 Erstelle einen umfassenden Abschlussbericht basierend auf allen Fragen und Antworten.
