@@ -25,6 +25,7 @@ function App() {
   const handleAnalyze = async () => {
     if (!state.jobText.trim()) return;
     startAnalysis();
+    setError(null);
     try {
       const res = await fetch('/api/analyze-job', {
         method: 'POST',
@@ -35,13 +36,16 @@ function App() {
       if (!res.ok) throw new Error(data.error || 'Analyse fehlgeschlagen');
       setJobAnalysis(data);
     } catch (err) {
-      setAnalysisError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+      const msg = err instanceof Error ? err.message : 'Unbekannter Fehler';
+      setAnalysisError(msg);
+      setError(msg);
     }
   };
 
   const handleSubmitAnswer = async (answer: string) => {
     submitAnswer(answer);
     if (!currentQuestion) return;
+    setError(null);
 
     try {
       const res = await fetch('/api/interview', {
@@ -58,11 +62,13 @@ function App() {
       if (!res.ok) throw new Error(data.error || 'Bewertung fehlgeschlagen');
       setEvaluation(data.evaluation, data.nextQuestion);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+      const msg = err instanceof Error ? err.message : 'Unbekannter Fehler';
+      setError(msg);
     }
   };
 
   const handleGenerateReport = async () => {
+    setError(null);
     try {
       const res = await fetch('/api/report', {
         method: 'POST',
@@ -77,7 +83,8 @@ function App() {
       if (!res.ok) throw new Error(data.error || 'Bericht fehlgeschlagen');
       setReport(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unbekannter Fehler');
+      const msg = err instanceof Error ? err.message : 'Unbekannter Fehler';
+      setError(msg);
     }
   };
 
@@ -88,6 +95,8 @@ function App() {
     }
   }, [state.phase, state.qaPairs.length, state.report]);
 
+  const isAnalyzing = state.phase === 'analyzing';
+
   if (state.phase === 'upload' || state.phase === 'analyzing') {
     return (
       <main className="container">
@@ -97,13 +106,17 @@ function App() {
         </header>
         <PDFUpload 
           onTextExtracted={setJobText} 
-          disabled={state.phase === 'analyzing'} 
+          disabled={isAnalyzing} 
         />
-        {state.phase === 'analyzing' && <div className="loading">Analysiere Stelleninserat…</div>}
-        {error && <div className="error">{error}</div>}
-        {state.jobText && state.phase !== 'analyzing' && (
-          <button className="primary" onClick={handleAnalyze} disabled={!state.jobText.trim()}>
-            Interview generieren
+        {isAnalyzing && <div className="loading">Analysiere Stelleninserat…</div>}
+        {(error || state.error) && <div className="error">{error || state.error}</div>}
+        {state.jobText && !isAnalyzing && (
+          <button 
+            className="primary" 
+            onClick={handleAnalyze} 
+            disabled={!state.jobText.trim() || isAnalyzing}
+          >
+            {isAnalyzing ? 'Analysiere…' : 'Interview generieren'}
           </button>
         )}
       </main>
@@ -148,7 +161,7 @@ function App() {
         {state.phase === 'evaluating' && state.qaPairs.length < 8 && (
           <div className="loading">Antwort wird bewertet, nächste Frage wird generiert…</div>
         )}
-        {error && <div className="error">{error}</div>}
+        {(error || state.error) && <div className="error">{error || state.error}</div>}
       </main>
     );
   }
