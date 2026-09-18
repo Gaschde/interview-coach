@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { callGroqWhisper } from '../src/utils/groq';
+import { callGroqWhisper } from '../src/utils/groq.js';
 
 export const config = {
   api: {

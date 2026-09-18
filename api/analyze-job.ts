@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { callGroqLLM } from '../src/utils/groq';
+import { callGroqLLM } from '../src/utils/groq.js';
 
 const SYSTEM_PROMPT = `Du bist ein erfahrener Recruiter und Interview-Coach. 
 Analysiere das Stelleninserat und erstelle eine strukturierte Stellenanalyse plus die erste Interviewfrage.

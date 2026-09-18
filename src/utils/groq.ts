@@ -2,7 +2,7 @@ import Groq from 'groq-sdk';
 import type { ChatCompletionMessageParam } from 'groq-sdk/resources/chat/completions';
 
 const groq = new Groq({
-  apiKey: import.meta.env.VITE_GROQ_API_KEY,
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 export async function callGroqLLM(
@@ -39,7 +39,7 @@ export async function callGroqWhisper(audioBlob: Blob): Promise<string> {
   const response = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
     },
     body: formData,
   });
