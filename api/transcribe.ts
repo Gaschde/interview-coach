@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Keine Audiodaten gefunden' });
     }
 
-    const audioBlob = new Blob([audioBuffer], { type: 'audio/webm' });
+    const audioBlob = new Blob([new Uint8Array(audioBuffer)], { type: 'audio/webm' });
     const text = await callGroqWhisper(audioBlob);
     
     res.status(200).json({ text, language: 'de' });
